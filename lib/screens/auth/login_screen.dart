@@ -1,9 +1,12 @@
+import 'package:chat_app/api/apis.dart';
+import 'package:chat_app/helper/Dailogs.dart';
 import 'package:chat_app/main.dart';
 import 'package:chat_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:connectivity/connectivity.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,30 +29,48 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    Future<UserCredential> _signInWithGoogle() async {
+    Future<UserCredential?> _signInWithGoogle() async {
+      Dialogue.showIndicator(context);
       // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      var connectivityResult = await Connectivity().checkConnectivity();
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication.catchError((error) {
-        print('$error');
-      });
+      try {
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        if (googleUser == null) {
+          Dialogue.showSnackBar(context, "SignIn Cancelled");
+          return null;
+        }
+        // Obtain the auth details from the request
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication.catchError((error) {
+          print('$error');
+        });
 
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
+        // Create a new credential
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        Dialogue.showIndicator(context);
 
-      // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+        // Once signed in, return the UserCredential
+        return await APIs.auth.signInWithCredential(credential);
+      } catch (e) {
+        if (connectivityResult == ConnectivityResult.none) {
+          Dialogue.showSnackBar(context, 'No internet connection');
+        } else {
+          Dialogue.showSnackBar(context, 'an error has occured');
+        }
+      }
     }
 
-    void _clickedGoogle() {
+    void clickedGoogle() {
+      // Dialogue.showIndicator(context);
       _signInWithGoogle().then((user) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()));
+        if (user != null) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()));
+        }
       });
     }
 
@@ -79,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
           right: mq.width / 100,
           child: GestureDetector(
             onTap: () {
-              _clickedGoogle();
+              clickedGoogle();
             },
             child: Container(
               height: mq.height * 0.089,
