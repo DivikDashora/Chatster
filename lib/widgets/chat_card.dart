@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/main.dart';
 import 'package:chat_app/models/chat_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +29,10 @@ class _ChatCardState extends State<ChatCard> {
           maxLines: 1,
         ),
         trailing: const Text('12:00 PM'),
-        leading: const CircleAvatar(
-          child: Icon(CupertinoIcons.person),
-        ),
+        leading: CachedNetworkImage(
+            width: mq.height * 0.05,
+            height: mq.height * 0.05,
+            imageUrl: widget.user.image),
         selectedColor: Colors.blue,
       )),
     );

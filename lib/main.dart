@@ -1,5 +1,4 @@
 import 'package:chat_app/screens/auth/login_screen.dart';
-import 'package:chat_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
@@ -37,7 +36,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.grey[300],
       )),
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }

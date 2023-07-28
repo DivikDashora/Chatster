@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chat_app/api/apis.dart';
 import 'package:chat_app/models/chat_user.dart';
 import 'package:chat_app/screens/auth/login_screen.dart';
+import 'package:chat_app/screens/profile.dart';
 import 'package:chat_app/widgets/chat_card.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,15 +23,26 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => profile()));
+            },
+            icon: const Icon(Icons.home)),
+
         titleSpacing: 20,
         // centerTitle: false,
-        title: const Text('Chatster'),
+        title: const Text(
+          'Chatster',
+          style: TextStyle(color: Colors.white),
+        ),
         shadowColor: Colors.transparent,
-        backgroundColor: const Color.fromARGB(255, 205, 217, 255),
+        backgroundColor: Colors.deepPurple.shade500,
         automaticallyImplyLeading: false,
         toolbarHeight: 50,
       ),
       body: Container(
+          decoration: BoxDecoration(color: Colors.deepPurple.shade100),
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: Padding(

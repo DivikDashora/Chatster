@@ -66,10 +66,17 @@ class _LoginPageState extends State<LoginPage> {
 
     void clickedGoogle() {
       // Dialogue.showIndicator(context);
-      _signInWithGoogle().then((user) {
+      _signInWithGoogle().then((user) async {
         if (user != null) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()));
+          if (await APIs.userExists()) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()));
+          } else {
+            APIs.createUser().then((value) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()));
+            });
+          }
         }
       });
     }
